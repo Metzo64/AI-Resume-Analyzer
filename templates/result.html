@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analysis Results - AI Resume Analyzer</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Analysis Results</h1>
+            <p>Comprehensive resume evaluation complete</p>
+        </div>
+
+        {% if error %}
+        <!-- Error Message -->
+        <div class="card error-card">
+            <div class="error-icon">⚠️</div>
+            <h2>Analysis Error</h2>
+            <p>{{ error }}</p>
+            <a href="/" class="btn-back">← Upload Another Resume</a>
+        </div>
+        {% else %}
+        <!-- Results Display -->
+        <div class="results-grid">
+            
+            <!-- Category Card -->
+            <div class="result-card">
+                <div class="result-icon">🏷️</div>
+                <h3>Resume Category</h3>
+                <div class="result-value category-value">{{ results.category }}</div>
+                <p class="result-description">AI-predicted professional domain</p>
+            </div>
+
+            <!-- Match Score Card -->
+            <div class="result-card">
+                <div class="result-icon">🎯</div>
+                <h3>Job Match Score</h3>
+                <div class="result-value match-value">
+                    {{ results.match_score }}%
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" data-width="{{ results.match_score }}"></div>
+                </div>
+                <p class="result-description">Compatibility with selected role</p>
+            </div>
+
+            <!-- Skills Card -->
+            <div class="result-card skills-card">
+                <div class="result-icon">💡</div>
+                <h3>Identified Skills</h3>
+                <div class="skills-container">
+                    {% if results.skills %}
+                        {% for skill in results.skills %}
+                        <span class="skill-tag">{{ skill }}</span>
+                        {% endfor %}
+                    {% else %}
+                        <p class="no-data">No skills detected</p>
+                    {% endif %}
+                </div>
+                <p class="result-description">{{ results.skills|length }} professional skills extracted</p>
+            </div>
+
+            <!-- Contact Info Card -->
+            <div class="result-card">
+                <div class="result-icon">📧</div>
+                <h3>Contact Information</h3>
+                <div class="contact-info">
+                    {% if results.email %}
+                        <p><strong>Email:</strong> {{ results.email }}</p>
+                    {% else %}
+                        <p class="no-data">No email found</p>
+                    {% endif %}
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Job Details Section -->
+        {% if results.job_title %}
+        <div class="card job-details">
+            <h3>� Target Position Analysis</h3>
+            <h4>{{ results.job_title }}</h4>
+            {% if results.job_description %}
+            <p class="job-desc">{{ results.job_description }}</p>
+            {% endif %}
+            <p style="color: #6b7280; font-size: 0.9em; margin-top: 15px; font-style: italic;">
+                The match score indicates how well your resume aligns with the requirements and keywords of this position.
+            </p>
+        </div>
+        {% endif %}
+
+        <!-- Match Interpretation -->
+        <div class="card interpretation">
+            <h3>� Match Analysis</h3>
+            {% if results.match_score >= 80 %}
+                <p class="match-excellent">
+                    <strong>Excellent Match ({{ results.match_score }}%)</strong><br><br>
+                    Your resume demonstrates strong alignment with the target position. Your skills and experience closely match the job requirements. This is a highly suitable role for your profile.
+                </p>
+            {% elif results.match_score >= 60 %}
+                <p class="match-good">
+                    <strong>Good Match ({{ results.match_score }}%)</strong><br><br>
+                    Your resume shows relevant experience and skills for this position. Consider emphasizing specific achievements and keywords that align with the job description to strengthen your application.
+                </p>
+            {% elif results.match_score >= 40 %}
+                <p class="match-moderate">
+                    <strong>Moderate Match ({{ results.match_score }}%)</strong><br><br>
+                    There is some alignment between your resume and the position, but significant gaps exist. You may want to highlight transferable skills or consider additional training to better match the role requirements.
+                </p>
+            {% else %}
+                <p class="match-low">
+                    <strong>Limited Match ({{ results.match_score }}%)</strong><br><br>
+                    Your resume shows limited alignment with this specific role. Consider exploring positions that better match your current skill set and experience, or invest in developing skills relevant to this field.
+                </p>
+            {% endif %}
+        </div>
+
+        <!-- Recommendations -->
+        <div class="card" style="background: #f0f7ff; border: 1px solid #dbeafe;">
+            <h3 style="color: #1e40af; margin-bottom: 15px;">💡 Recommendations</h3>
+            <ul style="color: #374151; line-height: 1.8; padding-left: 20px;">
+                <li>Ensure your resume includes relevant keywords from the job description</li>
+                <li>Quantify your achievements with specific metrics and results</li>
+                <li>Highlight skills that directly match the target role requirements</li>
+                <li>Keep your resume format clean and ATS-friendly</li>
+                <li>Tailor your resume for each specific position you apply to</li>
+            </ul>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+            <a href="/" class="btn-back">← Analyze Another Resume</a>
+        </div>
+        {% endif %}
+
+        <footer>
+            <p>Powered by BERT, Sentence-BERT, and Natural Language Processing</p>
+            <p style="margin-top: 5px; font-size: 0.85em;">© 2024 AI Resume Analyzer</p>
+        </footer>
+    </div>
+
+    <script>
+        // Animate progress bar on load
+        window.addEventListener('load', function() {
+            const progressFill = document.querySelector('.progress-fill');
+            if (progressFill) {
+                const width = progressFill.getAttribute('data-width');
+                progressFill.style.width = width + '%';
+            }
+        });
+    </script>
+</body>
+</html>

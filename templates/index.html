@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Resume Analyzer</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>AI Resume Analyzer</h1>
+            <p>Intelligent resume analysis powered by deep learning</p>
+        </div>
+
+        <!-- Team Credits -->
+        <div class="team-credits">
+            <h3>Developed By</h3>
+            <div class="team-members">
+                <a href="https://www.linkedin.com/in/maitreya-pawar-146664296/" target="_blank" class="team-member clickable">Maitreya Pawar</a>
+                <a href="https://www.linkedin.com/in/prakasita-mohanty/" target="_blank" class="team-member clickable">Prakasita Mohanty</a>
+                <a href="https://www.linkedin.com/in/nehal-garg-87b976347/" target="_blank" class="team-member clickable">Nehal Garg</a>
+                <span class="team-member">Saniya Sawnt</span>
+            </div>
+        </div>
+
+        <div class="card">
+            <form action="/analyze" method="POST" enctype="multipart/form-data" id="analyzeForm">
+                
+                <!-- File Upload Section -->
+                <div class="form-group">
+                    <label for="resume_file">Upload Resume</label>
+                    <div class="file-upload" id="fileUploadArea">
+                        <input 
+                            type="file" 
+                            id="resume_file" 
+                            name="resume_file" 
+                            accept=".txt,.pdf,.doc,.docx"
+                            required
+                        >
+                        <div class="upload-content">
+                            <div class="upload-icon">📄</div>
+                            <div class="upload-text">Click to upload or drag and drop</div>
+                            <div class="upload-subtext">Supported formats: TXT, PDF, DOC, DOCX</div>
+                            <div class="file-name" id="fileName"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Job Selection Section -->
+                <div class="form-group">
+                    <label for="job_title">Target Job Role</label>
+                    <select id="job_title" name="job_title" required>
+                        <option value="">Select a job role to compare</option>
+                        {% for job in job_titles %}
+                        <option value="{{ job }}">{{ job }}</option>
+                        {% endfor %}
+                    </select>
+                    <p style="color: #9ca3af; font-size: 0.85em; margin-top: 8px;">
+                        Select the job role you want to match your resume against. The system will calculate how well your resume aligns with the selected position.
+                    </p>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" class="btn-submit">
+                    Analyze Resume
+                </button>
+            </form>
+        </div>
+
+        <div class="features">
+            <div class="feature-item">
+                <div class="feature-icon">🔍</div>
+                <h3>Smart Parsing</h3>
+                <p>Extracts skills, experience, and key information from your resume</p>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon">🎯</div>
+                <h3>AI Classification</h3>
+                <p>BERT-powered categorization into 24 professional domains</p>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon">📊</div>
+                <h3>Job Matching</h3>
+                <p>Semantic analysis to measure compatibility with target roles</p>
+            </div>
+        </div>
+
+        <footer>
+            <p>Powered by BERT, Sentence-BERT, and Natural Language Processing</p>
+            <p style="margin-top: 5px; font-size: 0.85em;">© 2024 AI Resume Analyzer</p>
+        </footer>
+    </div>
+
+    <script>
+        // Display selected file name
+        document.getElementById('resume_file').addEventListener('change', function(e) {
+            const fileName = e.target.files[0]?.name || '';
+            const fileNameDisplay = document.getElementById('fileName');
+            if (fileName) {
+                fileNameDisplay.textContent = '✓ ' + fileName;
+                fileNameDisplay.style.display = 'block';
+            } else {
+                fileNameDisplay.style.display = 'none';
+            }
+        });
+
+        // Form validation
+        document.getElementById('analyzeForm').addEventListener('submit', function(e) {
+            const resumeFile = document.getElementById('resume_file').files[0];
+            const jobTitle = document.getElementById('job_title').value;
+
+            if (!resumeFile) {
+                e.preventDefault();
+                alert('Please upload a resume file.');
+                return false;
+            }
+
+            if (!jobTitle) {
+                e.preventDefault();
+                alert('Please select a target job role.');
+                return false;
+            }
+        });
+
+        // Drag and drop styling
+        const fileUploadArea = document.getElementById('fileUploadArea');
+        
+        fileUploadArea.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            this.style.borderColor = '#2563eb';
+            this.style.background = '#f0f7ff';
+        });
+
+        fileUploadArea.addEventListener('dragleave', function(e) {
+            e.preventDefault();
+            this.style.borderColor = '#d1d5db';
+            this.style.background = '#fafafa';
+        });
+
+        fileUploadArea.addEventListener('drop', function(e) {
+            e.preventDefault();
+            this.style.borderColor = '#d1d5db';
+            this.style.background = '#fafafa';
+        });
+    </script>
+</body>
+</html>
